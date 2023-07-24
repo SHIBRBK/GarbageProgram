@@ -19,6 +19,7 @@ cbuffer tensou : register(b5)
 {
     float textureWidth; // テクスチャの横大きさ
     float textureHeight; // テクスチャの縦大きさ
+    float cont;
 }
 
 PS_OUTPUT main(PS_INPUT input)
@@ -36,7 +37,7 @@ PS_OUTPUT main(PS_INPUT input)
     float2 up = input.uv0 + float2(0.0f, 1.0f / textureHeight);
     float2 down = input.uv0 - float2(0.0f, 1.0f / textureHeight);
         
-    float currentH = currentTex.Sample(sam, input.uv0);
+    float2 currentH = currentTex.Sample(sam, input.uv0);
 
     // 前フレームの高さデータ(言い換えれば今見てるフレーム)
     float2 prevH = Prevtex.Sample(sam, input.uv0);
@@ -47,8 +48,11 @@ PS_OUTPUT main(PS_INPUT input)
      up +
      down - 4.0f * currentH) * 0.5f;
 
+    //ワンチャン計算用のシェーダが間違えてるからこっちの方を見張る
+
     //float2 u = tex.Sample(sam,nextH);
     PSOutput.Out.r = nextH * 2 - 1;
+    PSOutput.Out.g = currentH*2-1;
     //PSOutput.Color =input.dif* 2 - 1;
     return PSOutput;
 }

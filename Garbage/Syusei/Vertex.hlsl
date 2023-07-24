@@ -93,7 +93,7 @@ VS_OUTPUT main(VS_INPUT input)
     //float2 texCoord = float2(input.uv0.x * width, input.uv0.y * height);
 
 // テクスチャから高さ情報をサンプリング
-    float heightValue = g_SrcTexture.SampleLevel(testSamp, input.uv0, 0).r * 2 - 1;
+    float heightValue = g_SrcTexture.SampleLevel(testSamp, input.uv0, 0).r ;
     //float4 TexColor;
     //int3 TexPosition;
 

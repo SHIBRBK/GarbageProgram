@@ -9,6 +9,9 @@ constexpr float LEN = 300.0f;
 constexpr float TERM = 50.0f;
 const int NUM = static_cast<int>(LEN / TERM);
 
+const int screenW=640;
+const int screenH=480;
+
 void DrawModel(int model,int vs,int ps,bool outline=false) {
 	auto num=MV1GetMeshNum(model);
 	DxLib::MV1SetUseOrigShader(true);
@@ -71,7 +74,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	{
 		return -1;
 	}
-	SetDrawScreen(DX_SCREEN_BACK);
+	
 	VECTOR pos = VGet(0.0f, 200.0f, -300.0f);
 	VECTOR cameraUp_ = { 0.0f,1.0f,0.0f };
 	SetCameraPositionAndTarget_UpVecY(pos, VGet(0, 0, 0));
@@ -80,15 +83,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	int Calchandle = LoadPixelShader("Calc.pso");
 	//int noiseps = LoadPixelShader("Post.pso");
 	//int normalH = LoadGraph("NormalMap.png");
-	//auto brickH = LoadGraph("brick.png");
+	int testH = LoadGraph("fucktra.png");
 	int MoHandle = MV1LoadModel("Model/plane4.mv1");
+	int DebugAnother = MV1LoadModel("Model/dairi.mv1");
 
 	MV1SetPosition(MoHandle, { 0.0f,0.0f,0.0f });
 	MV1SetScale(MoHandle, { 0.01f,0.01f,0.01f });
-	//MV1SetMaterialDifColor(MoHandle,0, GetColorF(1.0f, 0.0f, 0.0f, 1.0f));
+	MV1SetMaterialDifColor(MoHandle,0, GetColorF(1.0f, 0.0f, 0.0f, 1.0f));
 
-	int Prevscreen = MakeScreen(640, 480);//前スクリーン兼計算前スクリーン 入力用スクリーン
-	int screen = MakeScreen(640, 480);//それをもとに計算したスクリーン
+	int Prevscreen = MakeScreen(screenW, screenH, FALSE);//前スクリーン兼計算前スクリーン 入力用スクリーン
+	int screen = MakeScreen(screenW, screenH, FALSE);//それをもとに計算したスクリーン
 	//auto offscreen = MakeScreen(640, 480);
 
 	constexpr int screenWidth = 0;
@@ -102,7 +106,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	params[screenHeight] = 480;
 	params[constant] = 10;
 	char keystate[256];
-
+	SetDrawScreen(DX_SCREEN_BACK);
 	while (ProcessMessage() != -1 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 		ClearDrawScreen();
@@ -121,7 +125,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SetUseTextureToShader(1, Prevscreen);
 	SetDrawScreen(screen);
 	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
-
+	
 	array<VERTEX2DSHADER, 4> verts;
 	for (auto& v : verts) {
 		v.rhw = 1.0f;
@@ -148,9 +152,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	DrawPolygon2DToShader(verts.data(), verts.size());
 
 	SetDrawScreen(DX_SCREEN_BACK);
-	ClearDrawScreen();
 	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
-	SetCameraNearFar(10.0f, 1000.0f);
+	ClearDrawScreen();
+
+	DrawExtendGraph(0,0,100,100, Prevscreen,true);
+	SetCameraNearFar(10.0f, 500.0f);
 	//---------------------------------------------------------
 	DrawLine3D({ 0.0f,0.0f,0.0f }, { 100.0f,0.0f,0.0f }, 0xFF0000);//X
 	DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,100.0f,0.0f }, 0x00FF00);//Y
@@ -159,8 +165,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	SetUseVertexShader(vshandle);
 	SetUsePixelShader(pshandle);
-	SetUseTextureToShader(0, screen);
 	MV1DrawModel(MoHandle);
+	SetUseTextureToShader(0, screen);
+	//DrawGraph(0, 0, testH, false);
 
 		/*UpdateShaderConstantBuffer(cbufferH);
 		SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 0);*/
@@ -168,10 +175,20 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//SetUseTextureToShader(0, offscreen);
 		//SetUseTextureToShader(1, normalH);
 		//MyDrawGraph(0, 0, 640, 480);
-		//DrawFormatString(10, 10, 0xffffffff, "FPS=%f", GetFPS());
+	DrawFormatString(10, 10, 0xffffffff, "FPS=%f", GetFPS());
 
 	ScreenFlip();
 	}
+
+	// 読み込んだ頂点シェーダーの削除
+	DeleteShader(vshandle);
+
+	// 読み込んだピクセルシェーダーの削除
+	DeleteShader(pshandle);
+
+	// 読み込んだモデルの削除
+	MV1DeleteModel(MoHandle);
+
 	DxLib_End();				// ＤＸライブラリ使用の終了処理
 
 	return 0;					// ソフトの終了
