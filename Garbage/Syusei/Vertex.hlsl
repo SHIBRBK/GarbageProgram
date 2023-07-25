@@ -1,5 +1,5 @@
-SamplerState testSamp : register(s0);
-Texture2D g_SrcTexture : register(t0);
+SamplerState testSamp : register(s1);
+Texture2D g_SrcTexture : register(t1);
 
 struct VS_INPUT
 {

@@ -1,6 +1,6 @@
-SamplerState sam : register(s0);
-Texture2D currentTex : register(t0);
-Texture2D Prevtex : register(t1);
+SamplerState sam : register(s1);
+Texture2D currentTex : register(t1);
+Texture2D Prevtex : register(t2);
 
 struct PS_INPUT
 {
@@ -52,7 +52,7 @@ PS_OUTPUT main(PS_INPUT input)
 
     //float2 u = tex.Sample(sam,nextH);
     PSOutput.Out.r = nextH * 2 - 1;
-    PSOutput.Out.g = currentH*2-1;
+   // PSOutput.Out.g = currentH*2-1;
     //PSOutput.Color =input.dif* 2 - 1;
     return PSOutput;
 }

@@ -12,6 +12,16 @@ const int NUM = static_cast<int>(LEN / TERM);
 const int screenW=640;
 const int screenH=480;
 
+
+struct BitField
+{
+	char a : 1;
+	char b: 2;
+	char c : 3;
+	char d : 2;
+};
+
+
 void DrawModel(int model,int vs,int ps,bool outline=false) {
 	auto num=MV1GetMeshNum(model);
 	DxLib::MV1SetUseOrigShader(true);
@@ -75,7 +85,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		return -1;
 	}
 	
-	VECTOR pos = VGet(0.0f, 200.0f, -300.0f);
+	VECTOR pos = VGet(0.0f, 50.0f, -300.0f);
 	VECTOR cameraUp_ = { 0.0f,1.0f,0.0f };
 	SetCameraPositionAndTarget_UpVecY(pos, VGet(0, 0, 0));
 	int vshandle = LoadVertexShader("Vertex.vso");
@@ -104,7 +114,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	float* params = static_cast<float*>(GetBufferShaderConstantBuffer(cbufferH));
 	params[screenWidth] = 640;
 	params[screenHeight] = 480;
-	params[constant] = 10;
+	params[constant] =1;
 	char keystate[256];
 	SetDrawScreen(DX_SCREEN_BACK);
 	while (ProcessMessage() != -1 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
@@ -122,7 +132,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	UpdateShaderConstantBuffer(cbufferH);
 	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
 	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
-	SetUseTextureToShader(1, Prevscreen);
+	SetUseTextureToShader(2, Prevscreen);
 	SetDrawScreen(screen);
 	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
 	
@@ -155,7 +165,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
 	ClearDrawScreen();
 
-	DrawExtendGraph(0,0,100,100, Prevscreen,true);
+	DrawExtendGraph(0,0,150, 150, Prevscreen,true);
 	SetCameraNearFar(10.0f, 500.0f);
 	//---------------------------------------------------------
 	DrawLine3D({ 0.0f,0.0f,0.0f }, { 100.0f,0.0f,0.0f }, 0xFF0000);//X
@@ -166,7 +176,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SetUseVertexShader(vshandle);
 	SetUsePixelShader(pshandle);
 	MV1DrawModel(MoHandle);
-	SetUseTextureToShader(0, screen);
+	SetUseTextureToShader(1, screen);
 	//DrawGraph(0, 0, testH, false);
 
 		/*UpdateShaderConstantBuffer(cbufferH);

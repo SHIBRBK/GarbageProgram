@@ -1,5 +1,5 @@
-SamplerState sam : register(s0);
-Texture2D tex : register(t0);
+SamplerState sam : register(s1);
+Texture2D tex : register(t1);
 
 struct PS_INPUT//¡‰ñA•Ê–¼  VS_OUTPUT
 {
