@@ -281,7 +281,7 @@ void SceneManager::Draw(void)
 	// 描画
 	scene_->Draw(); 
 	//主にポストエフェクト
-	camera_->Draw();
+	//camera_->Draw();
 
 	
 	// 要リファクタリング

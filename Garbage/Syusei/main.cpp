@@ -101,6 +101,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	MV1SetScale(MoHandle, { 0.01f,0.01f,0.01f });
 	MV1SetMaterialDifColor(MoHandle,0, GetColorF(1.0f, 0.0f, 0.0f, 1.0f));
 
+
+	MV1SetPosition(DebugAnother, { 120.0f,0.0f,-150.0f });
+	MV1SetRotationXYZ(DebugAnother, { 0.0f,90.0f,0.0f });
+	MV1SetScale(DebugAnother, { 0.05f,0.05f,0.05f });
+	MV1SetMaterialDifColor(DebugAnother, 0, GetColorF(1.0f, 0.0f, 0.0f, 1.0f));
+
+
 	int Prevscreen = MakeScreen(screenW, screenH, FALSE);//前スクリーン兼計算前スクリーン 入力用スクリーン
 	int screen = MakeScreen(screenW, screenH, FALSE);//それをもとに計算したスクリーン
 	//auto offscreen = MakeScreen(640, 480);
@@ -127,13 +134,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		DrawCircle(0, 0, 100, 0x000000, true, 0);
 		}
 
+	SetDrawScreen(screen);
 	MV1SetUseOrigShader(TRUE);
 	SetUsePixelShader(Calchandle);
 	UpdateShaderConstantBuffer(cbufferH);
 	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
 	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
 	SetUseTextureToShader(2, Prevscreen);
-	SetDrawScreen(screen);
+	
 	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
 	
 	array<VERTEX2DSHADER, 4> verts;
@@ -176,6 +184,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SetUseVertexShader(vshandle);
 	SetUsePixelShader(pshandle);
 	MV1DrawModel(MoHandle);
+	MV1DrawModel(DebugAnother);
 	SetUseTextureToShader(1, screen);
 	//DrawGraph(0, 0, testH, false);
 
@@ -190,14 +199,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	ScreenFlip();
 	}
 
-	// 読み込んだ頂点シェーダーの削除
-	DeleteShader(vshandle);
-
-	// 読み込んだピクセルシェーダーの削除
-	DeleteShader(pshandle);
-
-	// 読み込んだモデルの削除
-	MV1DeleteModel(MoHandle);
 
 	DxLib_End();				// ＤＸライブラリ使用の終了処理
 

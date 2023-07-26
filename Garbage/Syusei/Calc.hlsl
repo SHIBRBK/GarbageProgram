@@ -1,6 +1,5 @@
 SamplerState sam : register(s1);
-Texture2D currentTex : register(t1);
-Texture2D Prevtex : register(t2);
+Texture2D tex : register(t2);
 
 struct PS_INPUT
 {
@@ -37,21 +36,30 @@ PS_OUTPUT main(PS_INPUT input)
     float2 up = input.uv0 + float2(0.0f, 1.0f / textureHeight);
     float2 down = input.uv0 - float2(0.0f, 1.0f / textureHeight);
         
-    float2 currentH = currentTex.Sample(sam, input.uv0);
+    //現在
+    float4 Height;
+    Height = tex.Sample(sam, input.uv0);
 
     // 前フレームの高さデータ(言い換えれば今見てるフレーム)
-    float2 prevH = Prevtex.Sample(sam, input.uv0);
-    float2 nextH = (2.0f * currentH) - prevH + c *
-    (
-    left +
-    right +
-     up +
-     down - 4.0f * currentH) * 0.5f;
+    //過去
+
+    
+    float nextH = 2.0f * Height.r + c * (Height.r * right + Height.r * left +
+    Height.r * up + Height.r * down - 4.0f * Height.r) - Height.g;
+    
+    
+    //float2 nextH = (2.0f * Height.r) - Height.g + c *
+    //(
+    //right +
+    //left +
+    // up +
+    // down - 4.0f * Height.r) * 0.5f;
 
     //ワンチャン計算用のシェーダが間違えてるからこっちの方を見張る
 
     //float2 u = tex.Sample(sam,nextH);
     PSOutput.Out.r = nextH * 2 - 1;
+    PSOutput.Out.g = Height.g * 2 - 1;
    // PSOutput.Out.g = currentH*2-1;
     //PSOutput.Color =input.dif* 2 - 1;
     return PSOutput;
