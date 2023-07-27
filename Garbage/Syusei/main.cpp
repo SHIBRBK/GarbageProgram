@@ -1,4 +1,4 @@
-#include"MyDx/DxLib.h"
+#include<DxLib.h>
 #include<vector>
 #include<array>
 #include<cassert>
@@ -126,22 +126,25 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SetDrawScreen(DX_SCREEN_BACK);
 	while (ProcessMessage() != -1 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
-		ClearDrawScreen();
+		
 		if (CheckHitKey(KEY_INPUT_U))
 		{
 		SetDrawScreen(Prevscreen);
 		DrawGraph(0, 0, screen, true);
-		DrawCircle(0, 0, 100, 0x000000, true, 0);
+		DrawCircle(0, 0, 200, 0x000000, true, 0);
 		}
 
-	SetDrawScreen(screen);
+
 	MV1SetUseOrigShader(TRUE);
 	SetUsePixelShader(Calchandle);
+
 	UpdateShaderConstantBuffer(cbufferH);
 	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
 	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
 	SetUseTextureToShader(2, Prevscreen);
-	
+	SetUseTextureToShader(2, -1);
+	SetDrawScreen(screen);
+
 	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
 	
 	array<VERTEX2DSHADER, 4> verts;
@@ -182,10 +185,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//---------------------------------------------------------
 
 	SetUseVertexShader(vshandle);
+	SetUseVertexShader(-1);
+
 	SetUsePixelShader(pshandle);
+	SetUsePixelShader(-1);
 	MV1DrawModel(MoHandle);
 	MV1DrawModel(DebugAnother);
 	SetUseTextureToShader(1, screen);
+	SetUseTextureToShader(1, -1);
 	//DrawGraph(0, 0, testH, false);
 
 		/*UpdateShaderConstantBuffer(cbufferH);
