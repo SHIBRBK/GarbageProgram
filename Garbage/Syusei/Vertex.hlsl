@@ -1,5 +1,5 @@
-SamplerState testSamp : register(s1);
-Texture2D g_SrcTexture : register(t1);
+SamplerState testSamp : register(s0);
+Texture2D g_SrcTexture : register(t0);
 
 struct VS_INPUT
 {
@@ -71,12 +71,7 @@ cbuffer EMERGENCY : register(b5)
 };
 
 
-float4 ComputeLaplacian(float3 position, float3 neighbor1,
-    float3 neighbor2, float3 neighbor3, float3 neighbor4)
-{
-    float3 laplacian = neighbor1 + neighbor2 + neighbor3 + neighbor4 - 4.0 * position;
-    return float4(laplacian, 0.0);
-}
+
 
 VS_OUTPUT main(VS_INPUT input)
 {

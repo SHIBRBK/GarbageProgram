@@ -122,31 +122,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	params[screenWidth] = 640;
 	params[screenHeight] = 480;
 	params[constant] =1;
-	char keystate[256];
-	SetDrawScreen(DX_SCREEN_BACK);
-	while (ProcessMessage() != -1 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
-	{
-		
-		if (CheckHitKey(KEY_INPUT_U))
-		{
-		SetDrawScreen(Prevscreen);
-		DrawGraph(0, 0, screen, true);
-		DrawCircle(0, 0, 200, 0x000000, true, 0);
-		}
-
-
-	MV1SetUseOrigShader(TRUE);
-	SetUsePixelShader(Calchandle);
-
 	UpdateShaderConstantBuffer(cbufferH);
-	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
-	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
-	SetUseTextureToShader(2, Prevscreen);
-	SetUseTextureToShader(2, -1);
-	SetDrawScreen(screen);
 
-	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
-	
+	char keystate[256];
+
 	array<VERTEX2DSHADER, 4> verts;
 	for (auto& v : verts) {
 		v.rhw = 1.0f;
@@ -170,40 +149,81 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	verts[3].pos.y = 0 + params[screenHeight];
 	verts[3].u = 1.0f;
 	verts[3].v = 1.0f;
-	DrawPolygon2DToShader(verts.data(), verts.size());
 
-	SetDrawScreen(DX_SCREEN_BACK);
-	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
-	ClearDrawScreen();
+	while (ProcessMessage() != -1 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	{
+		SetDrawScreen(Prevscreen);
+		ClearDrawScreen();
+		DrawGraph(0, 0, screen, true);
+		if (CheckHitKey(KEY_INPUT_UP))
+		{
+	
+		DrawCircle(320, 240, 10, 0xff0000, true);
+		}
 
-	DrawExtendGraph(0,0,150, 150, Prevscreen,true);
-	SetCameraNearFar(10.0f, 500.0f);
-	//---------------------------------------------------------
-	DrawLine3D({ 0.0f,0.0f,0.0f }, { 100.0f,0.0f,0.0f }, 0xFF0000);//X
-	DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,100.0f,0.0f }, 0x00FF00);//Y
-	DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,100.0f }, 0x0000FF);//Z
-	//---------------------------------------------------------
+		SetDrawScreen(screen);
+		ClearDrawScreen();
 
-	SetUseVertexShader(vshandle);
-	SetUseVertexShader(-1);
+		SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
 
-	SetUsePixelShader(pshandle);
-	SetUsePixelShader(-1);
-	MV1DrawModel(MoHandle);
-	MV1DrawModel(DebugAnother);
-	SetUseTextureToShader(1, screen);
-	SetUseTextureToShader(1, -1);
-	//DrawGraph(0, 0, testH, false);
+		MV1SetUseOrigShader(TRUE);
 
-		/*UpdateShaderConstantBuffer(cbufferH);
-		SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 0);*/
-		//SetUsePixelShader(noiseps);
-		//SetUseTextureToShader(0, offscreen);
-		//SetUseTextureToShader(1, normalH);
-		//MyDrawGraph(0, 0, 640, 480);
-	DrawFormatString(10, 10, 0xffffffff, "FPS=%f", GetFPS());
+		SetUsePixelShader(Calchandle);
+		SetUseTextureToShader(0, Prevscreen);
+	
+		SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
+		SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
 
-	ScreenFlip();
+		DrawPrimitive2DToShader(verts.data(), verts.size(), DX_PRIMTYPE_TRIANGLESTRIP);
+
+		MV1SetUseOrigShader(false);
+
+		SetUsePixelShader(-1);
+		SetUseTextureToShader(0, -1);
+
+		SetShaderConstantBuffer(-1, DX_SHADERTYPE_PIXEL, 5);
+		SetShaderConstantBuffer(-1, DX_SHADERTYPE_VERTEX, 5);
+
+		
+		SetDrawScreen(DX_SCREEN_BACK);
+		SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), cameraUp_);
+		ClearDrawScreen();
+
+		DrawExtendGraph(0, 0, 320, 240, Prevscreen, true);
+		SetCameraNearFar(10.0f, 500.0f);
+		//---------------------------------------------------------
+		DrawLine3D({ 0.0f,0.0f,0.0f }, { 100.0f,0.0f,0.0f }, 0xFF0000);//X
+		DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,100.0f,0.0f }, 0x00FF00);//Y
+		DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,100.0f }, 0x0000FF);//Z
+		//---------------------------------------------------------
+
+		MV1SetUseOrigShader(true);
+
+		SetUseVertexShader(vshandle);;
+
+		SetUsePixelShader(pshandle);
+		SetUseTextureToShader(0, screen);
+	
+		MV1DrawModel(MoHandle);
+	
+		SetUseVertexShader(-1);
+
+		SetUsePixelShader(-1);
+		SetUseTextureToShader(0, -1);
+	
+		MV1SetUseOrigShader(false);
+
+
+			/*UpdateShaderConstantBuffer(cbufferH);
+			SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 0);*/
+			//SetUsePixelShader(noiseps);
+			//SetUseTextureToShader(0, offscreen);
+			//SetUseTextureToShader(1, normalH);
+			//MyDrawGraph(0, 0, 640, 480);
+		DrawFormatString(10, 10, 0xffffffff, "FPS=%f", GetFPS());
+		SetDrawScreen(DX_SCREEN_BACK);
+		ScreenFlip();
+	
 	}
 
 
