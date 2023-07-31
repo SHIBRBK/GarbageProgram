@@ -85,7 +85,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		return -1;
 	}
 	
-	VECTOR pos = VGet(0.0f, 50.0f, -300.0f);
+	VECTOR pos = VGet(0.0f, 150.0f, -300.0f);
 	VECTOR cameraUp_ = { 0.0f,1.0f,0.0f };
 	SetCameraPositionAndTarget_UpVecY(pos, VGet(0, 0, 0));
 	int vshandle = LoadVertexShader("Vertex.vso");

@@ -71,12 +71,7 @@ cbuffer EMERGENCY : register(b5)
 };
 
 
-float4 ComputeLaplacian(float3 position, float3 neighbor1,
-    float3 neighbor2, float3 neighbor3, float3 neighbor4)
-{
-    float3 laplacian = neighbor1 + neighbor2 + neighbor3 + neighbor4 - 4.0 * position;
-    return float4(laplacian, 0.0);
-}
+
 
 VS_OUTPUT main(VS_INPUT input)
 {
@@ -93,7 +88,7 @@ VS_OUTPUT main(VS_INPUT input)
     //float2 texCoord = float2(input.uv0.x * width, input.uv0.y * height);
 
 // テクスチャから高さ情報をサンプリング
-    float heightValue = g_SrcTexture.SampleLevel(testSamp, input.uv0, 0).r * 2 - 1;
+    float heightValue = g_SrcTexture.SampleLevel(testSamp, input.uv0, 0).r;
     //float4 TexColor;
     //int3 TexPosition;
 

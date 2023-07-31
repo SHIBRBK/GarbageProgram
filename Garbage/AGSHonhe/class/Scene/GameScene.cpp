@@ -1,5 +1,4 @@
-#include <cassert>
-#include <DxLib.h>
+#include<algorithm>
 #include "GameScene.h"
 #include "TitleScene.h"
 #include"../Manager/SceneManager.h"
@@ -7,6 +6,9 @@
 #include "../Object/SkyDome.h"
 #include "../../Resource.h"
 #include "../Common/DxCushion.h"
+#include"../../Application.h"
+
+
 GameScene::GameScene() :BaseScene()
 {
 	mSkyDome = nullptr;
@@ -61,11 +63,7 @@ void GameScene::Init(void)
 	mSkyDome->Init();
 	SceneManager::GetInstance().GetCamera()->SetPlayerPos(&bb.get()->GetTransform());
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FOLLOW);
-	camera_.get()->GetInstance();
-	shadIdP = LoadPixelShader("../../PixelShader.pso");
-	shadIdV = LoadVertexShader("../../VertexShader.vso");
-	shadIdC = LoadVertexShader("../../calculation.pso");
-	test = Resource::LoadModel(Resource::PATH_MODEL + "Stage/plane4.mv1");
+	test = MV1LoadModel((Resource::PATH_MODEL+"Stage/plane4.mv1").c_str());
 	//プレイヤーの破壊演出時間
 	mStepDestroy = 3.0f;
 	time = 5000;
@@ -152,96 +150,9 @@ void GameScene::Update()
 
 void GameScene::Draw(void)
 {
-
-
-	//int Prevscreen = MakeScreen(1024, 640);//前スクリーン兼計算前スクリーン 入力用スクリーン
-	//int screen = MakeScreen(1024, 640);//それをもとに計算したスクリーン
-	//constexpr int screenWidth = 0;
-	//constexpr int screenHeight = 1;
-	//constexpr int constant = 2;
-	//int cbufferH = CreateShaderConstantBuffer(sizeof(float) * 4);
-	//float* params = static_cast<float*>(GetBufferShaderConstantBuffer(cbufferH));
-	//params[screenWidth] = 1024;
-	//params[screenHeight] = 640;
-	//params[constant] = 10;
-	//
-	//if (CheckHitKey(KEY_INPUT_U))
-	//{
-	//	SetDrawScreen(Prevscreen);
-	//	DrawGraph(0, 0, screen, true);
-	//	DrawCircle(0, 0, 100, 0x000000, true, 0);
-	//}
-	//MV1SetUseOrigShader(TRUE);
-	//SetUsePixelShader(shadIdC);
-	//UpdateShaderConstantBuffer(cbufferH);
-	//SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
-	//SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
-	//SetUseTextureToShader(1, Prevscreen);
-	//SetDrawScreen(screen);
-	//VERTEX2DSHADER Vert[6] = { 0.0f };
-	//Vert[0].pos = VGet(0.0f, params[screenHeight], 0.0f);
-	//Vert[0].u = 0.0f;
-	//Vert[0].v = 0.0f;
-
-	//Vert[1].pos = VGet(params[screenWidth], params[screenHeight], 0.0f);
-	//Vert[1].u = 1.0f;
-	//Vert[1].v = 0.0f;
-	//Vert[2].pos = VGet(0.0f, 0.0f, 0.0f);
-	//Vert[2].u = 0.0f;
-	//Vert[2].v = 1.0f;
-	//Vert[3].pos = VGet(params[screenWidth], 0.0f, 0.0f);
-	//Vert[3].u = 1.0f;
-	//Vert[3].v = 1.0f;
-	//Vert[4] = Vert[2];
-	//Vert[5] = Vert[1];
-	//DrawPolygon2DToShader(Vert, 6);
-
-	//SetDrawScreen(DX_SCREEN_BACK);
-	//ClearDrawScreen();
-	//
-	//DrawLine3D({ 0.0f,0.0f,0.0f }, { 100.0f,0.0f,0.0f }, 0xFF0000);//X
-	//DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,100.0f,0.0f }, 0x00FF00);//Y
-	//DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,100.0f }, 0x0000FF);//Z
-	//SetUseVertexShader(shadIdV);
-	//SetUsePixelShader(shadIdP);
-	//SetUseTextureToShader(0, screen);
-
-
-	//shadIdP = Resource::MyLoadPixelShader(Resource::PATH_SHADER + "Post.pso");
-	//normal = Resource::LoadTexture(Resource::PATH_TEXTURE + "gruss_n.png");
-	//fuck = Resource::LoadTexture(Resource::PATH_TEXTURE + "fucktra.png");
-	//offscreen = MakeScreen(1024, 640);
-	//cbufferH = CreateShaderConstantBuffer(sizeof(float) * 4);
-	//params = static_cast<float*>(GetBufferShaderConstantBuffer(cbufferH));
-	//id_time = 0;
-	//id_cut = 1;
-	//SetDrawScreen(offscreen);
-	//// カメラ設定
-	//camera_->SetBeforeDraw();
-	//ClearDrawScreen();
-	//DrawGraph(0, 0, fuck, false);
-
-	//SetDrawScreen(DX_SCREEN_BACK);
-	//ClearDrawScreen();
-	//// this->SetDefault();
-
-	//UpdateShaderConstantBuffer(cbufferH);
-	//SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 0);
-	//SetUsePixelShader(shadIdP);
-	//SetUseTextureToShader(0, offscreen);
-	//SetUseTextureToShader(1, normal);
-	//DxCushion::MyDrawGraph(0, 0, 1024, 640);
-	//DrawFormatString(0, 210, 0xffffffff, "FPS=%f", GetFPS());
-
-
-
-	//params[id_time] = 0;
-	//params[id_cut] = 250.0f;
-
-
+	
 	mSkyDome->Draw();
-	MV1DrawModel(test);
-
+	
 	constexpr float LEN = 3000.0f;
 	constexpr float TERM = 100.0f;
 	const int NUM = static_cast<int>(LEN / TERM);
@@ -273,7 +184,7 @@ void GameScene::Draw(void)
 
 	bb->Draw();
 	ec->Draw();
-	
+	MV1DrawModel(test);
 
 
 	auto shots = bb->GetShots();
@@ -287,7 +198,8 @@ void GameScene::Draw(void)
 		eshot->Draw();
 	}
 	DrawFormatString(0, 300, 0xff0000, "%d", time);
-	
+
+
 }
 
 void GameScene::Release(void)

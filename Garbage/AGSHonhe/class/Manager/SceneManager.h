@@ -9,6 +9,7 @@
 //
 #define lpSceneManager SceneManager::GetInstance()
 
+using namespace std;
 
 class SceneManager
 {
@@ -49,6 +50,7 @@ public:
 	void Init3D(void);
 	void Update(void);
 	void Draw(void);
+	void DrawShader(void);
 	void Release(void);
 	// èÛë‘ëJà⁄
 	void ChangeScene(SCENE_ID nextId, bool isFading);
@@ -83,19 +85,19 @@ private:
 	void MyDrawGraph(int x, int y, int width, int height);
 
 	GameScene* game_;
-	int shadIdC;
 	int shadIdP;
 	int shadIdV;
+	int shadIdC;
+	int test;
+	int screen;
+	int offscreen;
 	int fuck;
 	int normal;
-	int offscreen;
-	int MoHandle;
-	VECTOR pos;
-	int Prevscreen;
-	int screen;
 	int cbufferH;
+	int Prevscreen;
 	float* params;
 	int id_time;
 	int id_cut;
+	array<VERTEX2DSHADER, 4> verts;
 };
 

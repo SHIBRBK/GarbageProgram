@@ -5,6 +5,7 @@
 #include "../../Resource.h"
 #include "Camera.h"
 #include "SceneManager.h"
+#include "../../Application.h"
 SceneManager* SceneManager::mInstance = nullptr;
 
 
@@ -55,19 +56,61 @@ SceneManager& SceneManager::GetInstance(void)
 
 void SceneManager::Run(void)
 {
+	
+	shadIdV = LoadVertexShader((Resource::PATH_SHADER + "VertexShader.vso").c_str());
+	shadIdP = LoadPixelShader((Resource::PATH_SHADER + "PixelShader.vso").c_str());
+	shadIdC = LoadPixelShader((Resource::PATH_SHADER + "calculation.pso").c_str());
+	//int noiseps = LoadPixelShader("Post.pso");
+	//int normalH = LoadGraph("NormalMap.png");
+	fuck = LoadGraph("fucktra.png");
+	test = MV1LoadModel((Resource::PATH_MODEL + "Stage/plane4.mv1").c_str());
 
-	/*shadIdP = Resource::MyLoadPixelShader(Resource::PATH_SHADER+"Post.pso");
-	normal = Resource::LoadTexture(Resource::PATH_TEXTURE+"gruss_n.png");
-	fuck = Resource::LoadTexture(Resource::PATH_TEXTURE+"fucktra.png");
-	offscreen = MakeScreen(1024, 640);
 
-	cbufferH = CreateShaderConstantBuffer(sizeof(float) * 4);
-	params = static_cast<float*>(GetBufferShaderConstantBuffer(cbufferH));
-	id_time = 0;
-	id_cut = 1;
+	MV1SetPosition(test, { 0.0f,0.0f,0.0f });
+	MV1SetScale(test, { 0.5f,0.5f,0.5f });
+	MV1SetMaterialDifColor(test, 0, GetColorF(1.0f, 0.0f, 0.0f, 1.0f));
 
-	params[id_time] = 0;
-	params[id_cut] = 250.0f;*/
+	int Prevscreen = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, FALSE);//前スクリーン兼計算前スクリーン 入力用スクリーン
+	int screen = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, FALSE);//それをもとに計算したスクリーン
+	//auto offscreen = MakeScreen(640, 480);
+
+	constexpr int screenWidth = 0;
+	constexpr int screenHeight = 1;
+	constexpr int constant = 2;
+	//GetScreenState(&screenWidth,&screenHeight,0);
+	//X640 Y480
+	int cbufferH = CreateShaderConstantBuffer(sizeof(float) * 4);
+	float* params = static_cast<float*>(GetBufferShaderConstantBuffer(cbufferH));
+	params[screenWidth] = 640;
+	params[screenHeight] = 480;
+	params[constant] = 1;
+	UpdateShaderConstantBuffer(cbufferH);
+
+	char keystate[256];
+
+
+	for (auto& v : verts) {
+		v.rhw = 1.0f;
+		v.dif = GetColorU8(0xff, 0xff, 0xff, 0xff);
+		v.u = 0.0f;
+		v.v = 0.0f;
+		v.su = 0.0f;
+		v.sv = 0.0f;
+		v.pos.z = 0.0f;
+		v.spc = GetColorU8(0, 0, 0, 0);
+	}
+	verts[0].pos.x = 0;
+	verts[0].pos.y = 0;
+	verts[1].pos.x = 0 + params[screenWidth];
+	verts[1].pos.y = 0;
+	verts[1].u = 1.0f;
+	verts[2].pos.x = 0;
+	verts[2].pos.y = 0 + params[screenHeight];
+	verts[2].v = 1.0f;
+	verts[3].pos.x = 0 + params[screenWidth];
+	verts[3].pos.y = 0 + params[screenHeight];
+	verts[3].u = 1.0f;
+	verts[3].v = 1.0f;
 
 	// ゲームループ
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
@@ -76,26 +119,15 @@ void SceneManager::Run(void)
 		Update();
 
 		Draw();
-		//SetDrawScreen(offscreen);
-		//// カメラ設定
-		//camera_->SetBeforeDraw();
-		//ClearDrawScreen();
-		//DrawGraph(0, 0, fuck, false);
-
-		//SetDrawScreen(DX_SCREEN_BACK);
-		//ClearDrawScreen();
-		//UpdateShaderConstantBuffer(cbufferH);
-		//SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 0);
-		//SetUsePixelShader(shadIdP);
-		//SetUseTextureToShader(0, offscreen);
-		//SetUseTextureToShader(1, normal);
-		//MyDrawGraph(0, 0, 1024, 640);
-		//DrawFormatString(0, 210, 0xffffffff, "FPS=%f", GetFPS());
+		
 	}
 }
 
 void SceneManager::Init(void)
 {
+
+
+	
 
 	sceneID_ = SCENE_ID::TITLE;
 	waitsceneID_ = SCENE_ID::NONE;
@@ -117,7 +149,7 @@ void SceneManager::Init(void)
 	// 3D用の設定
 	Init3D();
 
-	
+
 
 }
 
@@ -144,18 +176,6 @@ void SceneManager::Init3D(void)
 	SetBackgroundColor(0, 0, 0);
 	//SetBackgroundColor(0, 100, 100);
 
-	// カメラ設定
-	// 初期状態では視点の位置が、 
-	// x = 320.0f, y = 240.0f, z = (画面のサイズによって変化)
-	// 注視点の位置は、
-	// x = 320.0f, y = 240.0f, z = 1.0f、
-	// カメラの上方向は
-	// x = 0.0f, y = 1.0f, z = 0.0f
-	// つまり画面のＸＹ平面上の中心に居てＺ軸のプラス方向を見るようなカメラになっています。
-	//SetCameraPositionAndAngle(
-	//	{ 0.0f, 200, -500.0f },
-	//	30.0f * (DX_PI_F / 180.0f), 0.0f, 0.0f
-	//);
 
 	//フォグの設定(カメラから遠い位置に霧をかける)
 	SetFogEnable(true);
@@ -195,94 +215,20 @@ void SceneManager::Update(void)
 
 void SceneManager::Draw(void)
 {
-
+	
 	SetDrawScreen(DX_SCREEN_BACK);
 	ClearDrawScreen();
-	//if (sceneID_ == SCENE_ID::GAME)
-	//{
-	//	shadeIdV = LoadVertexShader("../../VertexShader.vso");
-	//	shadIdP = LoadPixelShader("../../PixelShader.pso");
-	//	shadIdC = LoadPixelShader("../../calculation.pso");
-	//	MoHandle = Resource::LoadModel(Resource::PATH_MODEL + "Stage/plane4.mv1");
-	//	SetCameraPositionAndTarget_UpVecY(camera_->DEFAULT_CAMERA_POS, VGet(0, 0, 0));
-
-	//	constexpr int screenWidth = 0;
-	//	constexpr int screenHeight = 1;
-	//	constexpr int constant = 2;
-	//	cbufferH = CreateShaderConstantBuffer(sizeof(float) * 4);
-	//	params = static_cast<float*>(GetBufferShaderConstantBuffer(cbufferH));
-	//	params[screenWidth] = 1024;
-	//	params[screenHeight] = 640;
-	//	params[constant] = 3;
-
-	//	ClearDrawScreen();
-	//	if (CheckHitKey(KEY_INPUT_UP))
-	//	{
-	//		SetDrawScreen(Prevscreen);
-
-	//		DrawGraph(0, 0, screen, true);
-	//		DrawCircle(0, 0, 100, 0xFFFFFF, true, 0);
-	//	}
-	//	MV1SetUseOrigShader(TRUE);
-	//	UpdateShaderConstantBuffer(cbufferH);
-	//	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
-	//	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
-	//	SetUseTextureToShader(1, Prevscreen);
-	//	SetDrawScreen(screen);
-	//	VERTEX2DSHADER Vert[6] = { 0.0f };
-	//	Vert[0].pos = VGet(0.0f, params[screenHeight], 0.0f);
-	//	Vert[0].u = 0.0f;
-	//	Vert[0].v = 0.0f;
-
-	//	Vert[1].pos = VGet(params[screenWidth], params[screenHeight], 0.0f);
-	//	Vert[1].u = 1.0f;
-	//	Vert[1].v = 0.0f;
-
-	//	Vert[2].pos = VGet(0.0f, 0.0f, 0.0f);
-	//	Vert[2].u = 0.0f;
-	//	Vert[2].v = 1.0f;
-
-	//	Vert[3].pos = VGet(params[screenWidth], 0.0f, 0.0f);
-	//	Vert[3].u = 1.0f;
-	//	Vert[3].v = 1.0f;
-
-	//	Vert[4] = Vert[2];
-	//	Vert[5] = Vert[1];
-	//	DrawPolygon2DToShader(Vert, 6);
-
-	//	SetDrawScreen(DX_SCREEN_BACK);
-	//	ClearDrawScreen();
-	//	SetCameraPositionAndTargetAndUpVec(pos, VGet(0, 0, 0), {0.0f,1.0f,0.0f});
-	//	SetCameraNearFar(camera_.get()->CAMERA_NEAR, camera_.get()->CAMERA_FAR);
-
-	//	SetUseTextureToShader(0, screen);
-
-	//	MV1DrawModel(MoHandle);
-	//}
-
-	// 描画先グラフィック領域の指定
-	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
-
-
-
-		//params[id_time] += 0.01f;
-
-	
-	camera_->SetBeforeDraw();
-
-	
 
 	// Effekseerにより再生中のエフェクトを更新する。
 	UpdateEffekseer3D();
 
 
-	
 
-	// 描画
-	scene_->Draw(); 
+	camera_->SetBeforeDraw();
+	scene_->Draw();
 	//主にポストエフェクト
 	//camera_->Draw();
-
+	
 	
 	// 要リファクタリング
 	switch (sceneID_)
@@ -300,6 +246,83 @@ void SceneManager::Draw(void)
 
 	mFader->Draw();
 
+}
+
+void SceneManager::DrawShader(void)
+{
+	SetDrawScreen(Prevscreen);
+	ClearDrawScreen();
+	DrawGraph(0, 0, screen, true);
+	if (CheckHitKey(KEY_INPUT_UP))
+	{
+
+		DrawCircle(320, 240, 100, 0xff0000, true);
+	}
+
+	SetDrawScreen(screen);
+	ClearDrawScreen();
+
+	camera_.get()->SetBeforeDraw();
+
+	MV1SetUseOrigShader(TRUE);
+
+	SetUsePixelShader(shadIdC);
+	SetUseTextureToShader(0, Prevscreen);
+
+	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 5);
+	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_VERTEX, 5);
+
+	DrawPrimitive2DToShader(verts.data(), verts.size(), DX_PRIMTYPE_TRIANGLESTRIP);
+
+	MV1SetUseOrigShader(false);
+
+	SetUsePixelShader(-1);
+	SetUseTextureToShader(0, -1);
+
+	SetShaderConstantBuffer(-1, DX_SHADERTYPE_PIXEL, 5);
+	SetShaderConstantBuffer(-1, DX_SHADERTYPE_VERTEX, 5);
+
+
+	SetDrawScreen(DX_SCREEN_BACK);
+	camera_.get()->SetBeforeDraw();
+	ClearDrawScreen();
+
+	DrawExtendGraph(0, 0, 320, 240, Prevscreen, true);
+
+	//---------------------------------------------------------
+	DrawLine3D({ 0.0f,0.0f,0.0f }, { 100.0f,0.0f,0.0f }, 0xFF0000);//X
+	DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,100.0f,0.0f }, 0x00FF00);//Y
+	DrawLine3D({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,100.0f }, 0x0000FF);//Z
+	//---------------------------------------------------------
+
+	MV1SetUseOrigShader(true);
+
+	SetUseVertexShader(shadIdV);;
+
+	SetUsePixelShader(shadIdP);
+	SetUseTextureToShader(0, screen);
+
+	
+	MV1DrawModel(test);
+	scene_->Draw();
+
+	SetUseVertexShader(-1);
+
+	SetUsePixelShader(-1);
+	SetUseTextureToShader(0, -1);
+
+	MV1SetUseOrigShader(false);
+
+
+	/*UpdateShaderConstantBuffer(cbufferH);
+	SetShaderConstantBuffer(cbufferH, DX_SHADERTYPE_PIXEL, 0);*/
+	//SetUsePixelShader(noiseps);
+	//SetUseTextureToShader(0, offscreen);
+	//SetUseTextureToShader(1, normalH);
+	//MyDrawGraph(0, 0, 640, 480);
+	DrawFormatString(10, 10, 0xffffffff, "FPS=%f", GetFPS());
+	
+	
 }
 
 

@@ -1,11 +1,15 @@
 #pragma once
+#include<DxLib.h>
+#include<vector>
+#include<array>
 #include <memory>
-#include <list>
 #include "BaseScene.h"
 #include"../Common/Vector2D.h"
 #include"../Manager/Camera.h"
 #include"../Object/BattleShip.h"
 #include"../Object/EnemyCannon.h"
+
+using namespace std;
 
 class SkyDome;
 
@@ -45,6 +49,6 @@ private:
 	SkyDome* mSkyDome;
 	float mStepDestroy;
 	int time;
-
+	array<VERTEX2DSHADER, 4> verts;
 };
 

@@ -71,13 +71,6 @@ void Application::Run(void)
 		sceneManager.Update();
 
 		sceneManager.Draw();
-
-
-
-#ifdef _DEBUG
-
-#endif
-
 		ScreenFlip();
 
 	}
