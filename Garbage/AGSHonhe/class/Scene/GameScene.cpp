@@ -75,67 +75,61 @@ void GameScene::Update()
 	bb->Update();
 	ec->Update();
 	auto shots = bb->GetShots();
-	for (auto e : spawn_)
-	{
-		e->Update();
-		if (!e->IsAlive())
-		{
-			continue;
-
-		}
-		for (auto s : shots)
-		{
-			s->Update();
-
-			if (!s->IsAlive())
-			{
-				continue;
-			}
-			if (IsHitSpheres(
-				e->GetTransform().pos,
-				e->COLLISION_RADIUS,
-				s->GetPos(), s->GetCollisionRadius()))
-			{
-				e->Damage();
-				break;
-			}
-
-		}
-
-	}
-
-	auto eshots = ec->GetShots();
-	for (auto s : spawn_)
+	
+	for (auto s : shots)
 	{
 		s->Update();
-		for (auto e : eshots)
+		if (!s->IsAlive())
 		{
-			e->Update();
-
-			if (!e->IsAlive())
+			continue;
+		}
+		if (bb->IsAlive())
+		{
+			auto info = MV1CollCheck_Sphere(
+				bb->GetTransform().modelId, -1,
+				s->GetPos(), s->GetCollisionRadius());
+			if (info.HitNum > 0)
 			{
-				continue;
-			}
 
-			if (!s->IsAlive())
-			{
-				continue;
 			}
-
-			if (IsHitSpheres(
-				bb->GetTransform().pos,
-				bb.get()->COLLISION_RADIUS,
-				e->GetPos(), e->GetCollisionRadius()))
-			{
-				s->Damage();
-				//e->ShotDead(&tank_->GetTransform());
-				break;
-			}
-
+		
+			MV1CollResultPolyDimTerminate(info);
 		}
 
-		//MV1CollResultPolyDimTerminate(info);
 	}
+
+	//auto eshots = ec->GetShots();
+	//for (auto s : spawn_)
+	//{
+	//	s->Update();
+	//	for (auto e : eshots)
+	//	{
+	//		e->Update();
+
+	//		if (!e->IsAlive())
+	//		{
+	//			continue;
+	//		}
+
+	//		if (!s->IsAlive())
+	//		{
+	//			continue;
+	//		}
+
+	//		if (IsHitSpheres(
+	//			bb->GetTransform().pos,
+	//			bb.get()->COLLISION_RADIUS,
+	//			e->GetPos(), e->GetCollisionRadius()))
+	//		{
+	//			s->Damage();
+	//			//e->ShotDead(&tank_->GetTransform());
+	//			break;
+	//		}
+
+	//	}
+
+	//	//MV1CollResultPolyDimTerminate(info);
+	//}
 	auto scene_ = SceneManager::GetInstance;
 	mStepDestroy -= scene_().GetDeltaTime();
 
@@ -187,11 +181,6 @@ void GameScene::Draw(void)
 	MV1DrawModel(test);
 
 
-	auto shots = bb->GetShots();
-	for (auto shot : shots)
-	{
-		shot->Draw();
-	}
 	auto eshots = ec->GetShots();
 	for (auto eshot : eshots)
 	{

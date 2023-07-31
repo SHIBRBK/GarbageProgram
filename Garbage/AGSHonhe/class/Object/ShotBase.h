@@ -5,7 +5,6 @@
 class ShotBase
 {
 public:
-	
 
 	enum class STATE
 	{
@@ -58,7 +57,7 @@ private:
 	int* blastImgs_;
 	int blastAnimNum_;
 	// íeÇÃïWèÄë¨ìx
-	static constexpr float DEFAULT_SPEED = 50.0f;
+	static constexpr float DEFAULT_SPEED = 10.0f;
 	static constexpr float DEFAULT_TIME_ALIVE = 3.5f;
 
 };

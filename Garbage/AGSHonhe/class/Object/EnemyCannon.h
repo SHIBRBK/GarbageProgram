@@ -23,7 +23,7 @@ public:
 		DEAD
 	};
 
-	static constexpr float TIME_DELAY_SHOT = 3.0f;
+	static constexpr float TIME_DELAY_SHOT = 1.0f;
 	//被ダメージエフェクト
 	static constexpr float TIME_DAMAGED_EFFECT = 1.0f;
 
@@ -34,6 +34,7 @@ public:
 	~EnemyCannon()override;
 	bool Init()override;
 	void Update()override;
+
 	void UpdateDead();
 	void Draw()override;
 	void Release()override;

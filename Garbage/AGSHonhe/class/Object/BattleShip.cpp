@@ -62,10 +62,30 @@ bool BattleShip::Init()
 
     MV1SetDifColorScale(transform_.modelId, GetColorF(255, 0, 255, 1));
     //Laser = Resource::LoadEffect(Resource::PATH_EFFECT+"Laser01.efkproj");
+    //初期状態を走行状態にする
+    ChangeState(STATE::BATTLE);
+    
     return true;
 }
 
 void BattleShip::Update()
+{
+
+    switch (state_)
+    {
+    case BattleShip::STATE::BATTLE:
+        UpdateAlive();
+        break;
+    case BattleShip::STATE::DESTROY:
+        break;
+    case BattleShip::STATE::END:
+        break;
+    }
+
+
+}
+
+void BattleShip::UpdateAlive()
 {
     float steeringInterpolationSpeed = 2.0f;
     // デルタタイム
@@ -198,6 +218,12 @@ void BattleShip::Update()
 
     transform_.Update();
 
+    //当たり判定
+    int ret = MV1RefreshCollInfo(transform_.modelId, -1);
+}
+
+void BattleShip::UpdateDead()
+{
 }
 
 
@@ -246,6 +272,14 @@ void BattleShip::Draw()
     DrawFormatString(10, 70, 0xffffff, "x=%f", currentSpeed);
    // DrawFormatString(10, 130, 0xffffff, "x=%d", shotModelId_);
    // DrawFormatString(10, 150, 0xffffff, "x=%f,y=%f,z=%f", pos.x, pos.y, pos.z);
+}
+
+void BattleShip::DrawAlive()
+{
+}
+
+void BattleShip::DrawDead()
+{
 }
 
 void BattleShip::Release()
@@ -510,6 +544,11 @@ void BattleShip::TurretRot()
 
 }
 
+bool BattleShip::IsAlive(void) const
+{
+    return state_ == STATE::BATTLE;
+}
+
 
 void BattleShip::ProcessRot(void)
 {
@@ -570,6 +609,21 @@ void BattleShip::ProcessRot(void)
 
 }
 
+void BattleShip::ChangeState(STATE state)
+{
+    state_ = state;
+    switch (state)
+    {
+    case BattleShip::STATE::BATTLE:
+        break;
+    case BattleShip::STATE::DESTROY:
+        break;
+    }
+
+
+
+}
+
 void BattleShip::ProcessShot(void)
 {
     stepShotDelay_ -= SceneManager::GetInstance().GetDeltaTime();
@@ -627,8 +681,8 @@ void BattleShip::CreateShot(void)
     {
         if (!s->IsAlive())
         {
-            transform_.Update();
-            s->CreateShot(slidePosF, TurretQua.GetForward());
+            auto newShot = new PlayerShot(&transform_);
+            newShot->CreateShot(slidePosF, TurretQua.GetForward());
             isCreate = true;
         }
     }

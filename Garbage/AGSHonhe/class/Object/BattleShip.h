@@ -16,6 +16,15 @@ class BattleShip :
     public PlayerBase
 {
 public:
+    //状態
+    enum class STATE
+    {
+        NONE,
+        BATTLE,
+        DESTROY,
+        END
+    };
+
     enum class SpeedLevel
     {
         BACK = -1,
@@ -45,8 +54,12 @@ public:
     ~BattleShip()override;
     bool Init()override;
     void Update()override;
+    void UpdateAlive();
+    void UpdateDead();
 
     void Draw()override;
+    void DrawAlive();
+    void DrawDead();
     void Release()override;
     VECTOR GetPos(void)const override;
     const Transform& GetTransform(void) const;
@@ -66,6 +79,8 @@ public:
     void AddCollider(Collider* collider);
     void ClearCollider(void);
     void TurretRot();
+    //生存判定
+    bool IsAlive(void) const;
 protected:
 
 private:
@@ -98,7 +113,7 @@ private:
     MATRIX matPos;
     SpeedLevel currentSpeedLevel;
     Transform transform_;
-
+    STATE state_;
     // ショット(ポインタ)
     std::vector<PlayerShot*> shots_;
     // 発射操作
@@ -121,5 +136,7 @@ private:
     int mouseY;
     int prevMouseX;
     int prevMouseY;
+    //続きは、チェンジステートから
+    void ChangeState(STATE state);
 };
 

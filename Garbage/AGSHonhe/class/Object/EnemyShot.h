@@ -13,6 +13,13 @@ public:
 	//コンスト
 	EnemyShot(const Transform* parent);
 	~EnemyShot(void);
+	//更新
+	void Update(void) override;
+
+	void CreateShot(VECTOR birthPos, VECTOR dir) override;
+
+	// 弾の速度
+	float GetSpeed(void) const override;
 
 private:
 	STATE state_;

@@ -17,9 +17,9 @@ EnemyCannon::~EnemyCannon()
 bool EnemyCannon::Init()
 {
     transform_.modelId = Resource::LoadModel(Resource::PATH_MODEL + "Enemy/Fortress.mv1");
-    transform_.scl = { 50.0f, 50.0f, 50.0f };
-    transform_.rot = { 0.0f,90.0f,0.0f };
-    transform_.pos = { -100.0f,0.0f,300.0f };
+    transform_.scl = { 40.0f, 40.0f, 40.0f };
+    transform_.rot = { 0.0f,180.0f,0.0f };
+    transform_.pos = { 1400.0f,-350.0f,6000.0f };
 
     ChangeState(STATE::ALIVE);
     hp_ = 10;
@@ -51,7 +51,7 @@ void EnemyCannon::Update()
             s->Update();
         }
         ProcessShot();
-
+     
 
         break;
     case EnemyCannon::STATE::DEAD:
@@ -59,6 +59,7 @@ void EnemyCannon::Update()
         break;
     }
 }
+
 
 void EnemyCannon::UpdateDead()
 {
@@ -133,12 +134,15 @@ void EnemyCannon::ProcessShot(void)
     {
         stepShotDelay_ = 0.0f;
     }
-    if (CheckHitKey(KEY_INPUT_Z) && stepShotDelay_ <= 0.0f)
+    
+    //キーチェック
+    if (stepShotDelay_ <= 0.0f)
     {
+        //ディレイ時間をセット
         stepShotDelay_ = TIME_DELAY_SHOT;
 
+        //弾を生成
         CreateShot();
-        //  Effect();
 
     }
 }
@@ -207,7 +211,6 @@ void EnemyCannon::CreateShot(void)
     {
         if (!s->IsAlive())
         {
-            transform_.Update();
             s->CreateShot(framePosF, transform_.quaRot.GetForward());
             s->CreateShot(framePosS, transform_.quaRot.GetForward());
             s->CreateShot(framePosT, transform_.quaRot.GetForward());
@@ -220,7 +223,6 @@ void EnemyCannon::CreateShot(void)
     }
     if (!isCreate)
     {
-        transform_.Update();
         auto newShot = new EnemyShot(&transform_);
         newShot->CreateShot(framePosF, transform_.quaRot.GetForward());
         newShot->CreateShot(framePosS, transform_.quaRot.GetForward());
