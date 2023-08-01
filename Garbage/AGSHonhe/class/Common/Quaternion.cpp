@@ -709,6 +709,10 @@ double Quaternion::Deg2RadD(double deg)
     return deg * (DX_PI / 180.0);
 }
 
+float Quaternion::Deg2RadF(float deg)
+{
+    return deg * (DX_PI / 180.0);
+}
 
 
 Quaternion Quaternion::operator*(float& f) {

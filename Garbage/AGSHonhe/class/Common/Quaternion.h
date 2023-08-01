@@ -92,6 +92,7 @@ public:
 	static double SqrMagnitude(const VECTOR& v);
 	// “x(deg)‚©‚çƒ‰ƒWƒAƒ“(rad)
 	static double Deg2RadD(double deg);
+	static float Deg2RadF(float deg);
 
 private:
 

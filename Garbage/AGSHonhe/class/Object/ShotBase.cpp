@@ -12,6 +12,8 @@ ShotBase::ShotBase(const Transform* parent)
 	float scale = 20.0f;
 	transform_.scl = { scale, scale, scale };
 	transform_.pos = parent->pos;
+	transform_.quaRot = Quaternion();
+	transform_.quaRotLocal = Quaternion::Euler(Deg2RadF(90.0f), 0.0f, 0.0f);
 	transform_.Update();
 	mDir = {0.0f, 0.0f, 0.0f };
 
@@ -61,7 +63,8 @@ void ShotBase::Draw(void)
 	if (!CheckCameraViewClip(transform_.pos))
 	{
 		MV1DrawModel(transform_.modelId);
-		DrawFormatString(0, 300, 0xffffff, "%d", transform_.modelId);
+		DrawFormatString(0, 250, 0x000000, "%d", transform_.modelId);
+		DrawFormatString(0, 270, 0x000000, "%f,%f,%f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 	}
 }
 

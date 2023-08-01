@@ -67,11 +67,6 @@ void EnemyCannon::UpdateDead()
 
 void EnemyCannon::Draw()
 {
-
-    for (auto s : shots_)
-    {
-        s->Draw();
-    }
     if (stepDamaged_ > 0.0f)
     {
         MV1SetMaterialDifColor(transform_.modelId, 0, GetColorF(0.8f, 0.1f, 0.1f, 0.8f));
@@ -83,13 +78,14 @@ void EnemyCannon::Draw()
         MV1SetMaterialDifColor(transform_.modelId, 0, GetColorF(0.48f, 0.52f, 0.4f, 1.0f));
     }
     MV1DrawModel(transform_.modelId);
-
+    for (auto s : shots_)
+    {
+        s->Draw();
+    }
 }
 
 void EnemyCannon::Release()
 {
-    MV1DeleteModel(transform_.modelId);
-
     //’e‚Ì‰ð•ú
     for (auto s : shots_)
     {
@@ -97,6 +93,7 @@ void EnemyCannon::Release()
         delete s;
     }
     shots_.clear();
+    MV1DeleteModel(transform_.modelId);
 }
 
 void EnemyCannon::AddCollider(Collider* collider)

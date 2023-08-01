@@ -74,9 +74,9 @@ void GameScene::Update()
 	mSkyDome->Update();
 	bb->Update();
 	ec->Update();
-	auto shots = bb->GetShots();
+	auto shots = ec->GetShots();
 	
-	for (auto s : shots)
+	for (const auto s : shots)
 	{
 		s->Update();
 		if (!s->IsAlive())
@@ -90,7 +90,7 @@ void GameScene::Update()
 				s->GetPos(), s->GetCollisionRadius());
 			if (info.HitNum > 0)
 			{
-
+				continue;
 			}
 		
 			MV1CollResultPolyDimTerminate(info);
@@ -182,7 +182,7 @@ void GameScene::Draw(void)
 
 
 	auto eshots = ec->GetShots();
-	for (auto eshot : eshots)
+	for (const auto eshot : eshots)
 	{
 		eshot->Draw();
 	}
@@ -193,7 +193,8 @@ void GameScene::Draw(void)
 
 void GameScene::Release(void)
 {
-	bb.get_deleter();
+	bb.reset();
+	ec.reset();
 	mSkyDome->Release();
 	delete mSkyDome;
 }
