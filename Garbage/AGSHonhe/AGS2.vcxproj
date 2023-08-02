@@ -163,14 +163,15 @@
     <ClCompile Include="class\Manager\InputManager.cpp" />
     <ClCompile Include="class\Object\BattleShip.cpp" />
     <ClCompile Include="class\Object\Common\Collider.cpp" />
+    <ClCompile Include="class\Object\EnemyBase.cpp" />
     <ClCompile Include="class\Scene\BaseScene.cpp" />
     <ClCompile Include="class\Scene\GameScene.cpp" />
     <ClCompile Include="class\Manager\Graphics.cpp" />
     <ClCompile Include="class\Manager\Input\Input.cpp" />
     <ClCompile Include="class\Scene\Transition\Fader.cpp" />
-    <ClCompile Include="class\Object\EnemyBase.cpp" />
     <ClCompile Include="class\Object\EnemyCannon.cpp" />
     <ClCompile Include="class\Object\EnemyShot.cpp" />
+    <ClCompile Include="class\Object\KinkyuNoTeki.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="class\Manager\SceneManager.cpp" />
     <ClCompile Include="class\Object\ObjBase.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="class\Manager\InputManager.h" />
     <ClInclude Include="class\Object\BattleShip.h" />
     <ClInclude Include="class\Object\Common\Collider.h" />
+    <ClInclude Include="class\Object\EnemyBase.h" />
     <ClInclude Include="class\Object\PlayerShot.h" />
     <ClInclude Include="class\Scene\BaseScene.h" />
     <ClInclude Include="class\Manager\SceneManager.h" />
@@ -202,9 +204,9 @@
     <ClInclude Include="class\Scene\GameScene.h" />
     <ClInclude Include="class\Object\StageBase.h" />
     <ClInclude Include="class\Manager\Graphics.h" />
-    <ClInclude Include="class\Object\EnemyBase.h" />
     <ClInclude Include="class\Object\EnemyCannon.h" />
     <ClInclude Include="class\Object\EnemyShot.h" />
+    <ClInclude Include="class\Object\KinkyuNoTeki.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="class\Object\PlayerBase.h" />
     <ClInclude Include="class\Manager\Input\Input.h" />

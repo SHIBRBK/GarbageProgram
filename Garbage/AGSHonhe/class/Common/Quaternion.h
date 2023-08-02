@@ -99,6 +99,7 @@ private:
 	// 基本ベクトルを取得
 	VECTOR GetDir(VECTOR dir) const;
 
+
 	Quaternion operator*(float& rhs);
 	const Quaternion operator*(const float& rhs);
 	Quaternion operator+(Quaternion& rhs);

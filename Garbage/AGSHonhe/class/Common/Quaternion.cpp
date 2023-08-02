@@ -433,7 +433,7 @@ Quaternion Quaternion::GetRotation(MATRIX mat)
 
 VECTOR Quaternion::GetDir(VECTOR dir) const
 {
-    return PosAxis(dir);
+    return VNorm(VTransform(dir, ToMatrix()));
 }
 
 VECTOR Quaternion::GetForward(void) const

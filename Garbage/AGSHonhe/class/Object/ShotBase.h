@@ -36,6 +36,7 @@ public:
 	virtual void Move(void);
 	virtual void Release(void) ;
 	float Deg2RadF(float deg);
+
 protected:
 	// モデル制御の基本情報
 	Transform transform_;
@@ -58,7 +59,7 @@ private:
 	int blastAnimNum_;
 	// 弾の標準速度
 	static constexpr float DEFAULT_SPEED = 10.0f;
-	static constexpr float DEFAULT_TIME_ALIVE = 3.5f;
+	static constexpr float DEFAULT_TIME_ALIVE = 10.0f;
 
 };
 

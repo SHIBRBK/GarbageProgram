@@ -8,6 +8,7 @@
 #include"../Manager/Camera.h"
 #include"../Object/BattleShip.h"
 #include"../Object/EnemyCannon.h"
+#include"../Object/KinkyuNoTeki.h"
 
 using namespace std;
 
@@ -31,6 +32,7 @@ private:
 	int selectedShipIndex_;
 	uniqueBB bb;
 	uniqueEC ec;
+	uniqueEMA em;
 	uniqueCamera camera_;
 	std::vector<EnemyCannon*>spawn_;
 	int shadIdP;

@@ -55,7 +55,8 @@ bool BattleShip::Init()
 
    // shotModelId_ = Resource::LoadModel(Resource::PATH_MODEL + "shell/shell.mv1");
     stepShotDelay_ = 0.0f;
-
+    //‘Ï‹v—Í
+    hp_ = 50.0f;
 
     LoadDivGraph((Resource::PATH_TEXTURE + "Blast.png").c_str(),
         BLAST_ANIM_NUM, 4, 4, BLAST_SIZE_X, BLAST_SIZE_Y, blastImgs_, true);
@@ -65,6 +66,8 @@ bool BattleShip::Init()
     //‰Šúó‘Ô‚ð‘–só‘Ô‚É‚·‚é
     ChangeState(STATE::BATTLE);
     
+
+
     return true;
 }
 
@@ -251,10 +254,14 @@ void BattleShip::Draw()
     //mat = MMult(mat, matPos);
     //MV1SetFrameUserLocalMatrix(transform_.modelId, 1, mat);
 
-
-    
-  
-
+    if (mStepDamaged > 0.0f)
+    {
+        MV1SetMaterialDifColor(transform_.modelId, 0, GetColorF(0.8f, 0.1f, 0.1f, 0.8f));
+    }
+    else
+    {
+        MV1SetMaterialDifColor(transform_.modelId, 0, GetColorF(0.48f, 0.52f, 0.4f, 1.0f));
+    }
 
     MV1DrawModel(transform_.modelId);
     transform_.Update();
@@ -270,16 +277,29 @@ void BattleShip::Draw()
     DrawFormatString(10, 50, 0xffffff, "x=%d", static_cast<int>(
         currentSpeedLevel));
     DrawFormatString(10, 70, 0xffffff, "x=%f", currentSpeed);
+    DrawFormatString(10, 140, 0xffffff, "x=%d", hp_);
    // DrawFormatString(10, 130, 0xffffff, "x=%d", shotModelId_);
    // DrawFormatString(10, 150, 0xffffff, "x=%f,y=%f,z=%f", pos.x, pos.y, pos.z);
 }
 
 void BattleShip::DrawAlive()
 {
+
 }
 
 void BattleShip::DrawDead()
 {
+}
+
+void BattleShip::Damage()
+{
+    mStepDamaged = TIME_DAMAGED_EFFECT;
+    hp_ -= 1;
+
+    if (hp_ <= 0)
+    {
+        ChangeState(STATE::DESTROY);
+    }
 }
 
 void BattleShip::Release()

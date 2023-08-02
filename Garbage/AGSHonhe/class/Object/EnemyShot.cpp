@@ -28,7 +28,7 @@ void EnemyShot::Update(void)
 
 void EnemyShot::CreateShot(VECTOR birthPos, VECTOR dir)
 {
-    float SCALE = 20.0f;
+    float SCALE = 50.0f;
     transform_.scl = { SCALE ,SCALE ,SCALE };
     transform_.Update();
 

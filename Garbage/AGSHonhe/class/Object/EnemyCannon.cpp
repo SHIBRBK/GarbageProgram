@@ -21,6 +21,7 @@ bool EnemyCannon::Init()
     transform_.rot = { 0.0f,180.0f,0.0f };
     transform_.pos = { 1400.0f,-350.0f,6000.0f };
 
+
     ChangeState(STATE::ALIVE);
     hp_ = 10;
     //transform_.matScl= MScale(transform_.matScl,400.0f);
@@ -154,80 +155,20 @@ void EnemyCannon::CreateShot(void)
     VECTOR offsetF = { 0.0f,0.0f,0.0f };
     auto slidePosF = VAdd(framePosF, rotQuaF.PosAxis(offsetF));
 
-    auto matS = MV1GetFrameLocalWorldMatrix(transform_.modelId, 11);
-    auto rotS = MGetRotElem(matS);
-    auto rotQuaS = Quaternion::GetRotation(rotS);
-    auto framePosS = MV1GetFramePosition(transform_.modelId, 11);
-    VECTOR offsetS = { 0.0f,0.0f,0.0f };
-    auto slidePosS = VAdd(framePosS, rotQuaS.PosAxis(offsetS));
-
-
-    auto matT = MV1GetFrameLocalWorldMatrix(transform_.modelId, 20);
-    auto rotT = MGetRotElem(matT);
-    auto rotQuaT = Quaternion::GetRotation(rotT);
-    auto framePosT = MV1GetFramePosition(transform_.modelId, 20);
-    VECTOR offsetT = { 0.0f,0.0f,0.0f };
-    auto slidePosT = VAdd(framePosT, rotQuaT.PosAxis(offsetT));
-
-
-
-    auto matFor = MV1GetFrameLocalWorldMatrix(transform_.modelId, 29);
-    auto rotFor = MGetRotElem(matFor);
-    auto rotQuaFor = Quaternion::GetRotation(rotFor);
-    auto framePosFor = MV1GetFramePosition(transform_.modelId, 29);
-    VECTOR offsetFor = { 0.0f,0.0f,0.0f };
-    auto slidePosFor = VAdd(framePosFor, rotQuaFor.PosAxis(offsetFor));
-
-
-
-    auto matFiv = MV1GetFrameLocalWorldMatrix(transform_.modelId, 38);
-    auto rotFiv = MGetRotElem(matFiv);
-    auto rotQuaFiv = Quaternion::GetRotation(rotFiv);
-    auto framePosFiv = MV1GetFramePosition(transform_.modelId, 38);
-    VECTOR offsetFiv = { 0.0f,0.0f,0.0f };
-    auto slidePosFiv = VAdd(framePosFiv, rotQuaFiv.PosAxis(offsetFiv));
-
-
-    auto matSix = MV1GetFrameLocalWorldMatrix(transform_.modelId, 47);
-    auto rotSix = MGetRotElem(matSix);
-    auto rotQuaSix = Quaternion::GetRotation(rotSix);
-    auto framePosSix = MV1GetFramePosition(transform_.modelId, 47);
-    VECTOR offsetSix = { 0.0f,0.0f,0.0f };
-    auto slidePosSix = VAdd(framePosSix, rotQuaSix.PosAxis(offsetSix));
-
-
-    auto matSev = MV1GetFrameLocalWorldMatrix(transform_.modelId, 56);
-    auto rotSev = MGetRotElem(matSev);
-    auto rotQuaSev = Quaternion::GetRotation(rotSev);
-    auto framePosSev = MV1GetFramePosition(transform_.modelId, 56);
-    VECTOR offsetSev = { 0.0f,0.0f,0.0f };
-    auto slidePosSev = VAdd(framePosSev, rotQuaSev.PosAxis(offsetSev));
-
 
     for (auto s : shots_)
     {
         if (!s->IsAlive())
         {
-            s->CreateShot(framePosF, transform_.quaRot.GetForward());
-            s->CreateShot(framePosS, transform_.quaRot.GetForward());
-            s->CreateShot(framePosT, transform_.quaRot.GetForward());
-            s->CreateShot(framePosFor, transform_.quaRot.GetForward());
-            s->CreateShot(framePosFiv, transform_.quaRot.GetForward());
-            s->CreateShot(framePosSix, transform_.quaRot.GetForward());
-            s->CreateShot(framePosSev, transform_.quaRot.GetForward());
+            s->CreateShot(framePosF, transform_.quaRot.GetBack());
+
             isCreate = true;
         }
     }
     if (!isCreate)
     {
         auto newShot = new EnemyShot(&transform_);
-        newShot->CreateShot(framePosF, transform_.quaRot.GetForward());
-        newShot->CreateShot(framePosS, transform_.quaRot.GetForward());
-        newShot->CreateShot(framePosT, transform_.quaRot.GetForward());
-        newShot->CreateShot(framePosFor, transform_.quaRot.GetForward());
-        newShot->CreateShot(framePosFiv, transform_.quaRot.GetForward());
-        newShot->CreateShot(framePosSix, transform_.quaRot.GetForward());
-        newShot->CreateShot(framePosSev, transform_.quaRot.GetForward());
+        newShot->CreateShot(framePosF, transform_.quaRot.GetBack());
 
         shots_.emplace_back(newShot);
     }
@@ -246,6 +187,12 @@ bool EnemyCannon::IsDead(void) const
 const Transform& EnemyCannon::GetTransform(void) const
 {
     return transform_;
+}
+
+
+float EnemyCannon::Deg2RadF(float deg)
+{
+    return deg * (DX_PI_F / 180.0f);
 }
 
 void EnemyCannon::ChangeState(STATE state)

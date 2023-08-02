@@ -48,6 +48,8 @@ public:
     static constexpr int BLAST_SIZE_X = 32;
     static constexpr int BLAST_SIZE_Y = 32;
     static constexpr float TIME_DELAY_SHOT = 0.6f;
+    //被ダメージエフェクト
+    static constexpr float TIME_DAMAGED_EFFECT = 2.0f;
     //回転完了までの時間
     static constexpr float TIME_ROT = 2.0f;
     BattleShip();
@@ -60,6 +62,7 @@ public:
     void Draw()override;
     void DrawAlive();
     void DrawDead();
+    void Damage();
     void Release()override;
     VECTOR GetPos(void)const override;
     const Transform& GetTransform(void) const;
@@ -136,7 +139,10 @@ private:
     int mouseY;
     int prevMouseX;
     int prevMouseY;
+    int hp_;
     //続きは、チェンジステートから
     void ChangeState(STATE state);
+    //被ダメージエフェクトの時間計測用
+    float mStepDamaged;
 };
 

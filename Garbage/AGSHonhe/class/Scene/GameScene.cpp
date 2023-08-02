@@ -14,6 +14,7 @@ GameScene::GameScene() :BaseScene()
 	mSkyDome = nullptr;
 	bb = std::make_unique<BattleShip>();
 	ec = std::make_unique<EnemyCannon>();
+	em = std::make_unique<KinkyuNoTeki>();
 	camera_ = std::make_unique<Camera>();
 }
 
@@ -58,6 +59,7 @@ void GameScene::Init(void)
 {
 	bb->Init();
 	ec->Init();
+	em->Init();
 	// スカイドーム
 	mSkyDome = new SkyDome(&bb.get()->GetTransform());
 	mSkyDome->Init();
@@ -74,8 +76,11 @@ void GameScene::Update()
 	mSkyDome->Update();
 	bb->Update();
 	ec->Update();
+	em->Update();
+
+	//弾の更新
 	auto shots = ec->GetShots();
-	
+	auto shotsTwo = em->GetShots();
 	for (const auto s : shots)
 	{
 		s->Update();
@@ -85,6 +90,7 @@ void GameScene::Update()
 		}
 		if (bb->IsAlive())
 		{
+			//戦艦との当たり判定
 			auto info = MV1CollCheck_Sphere(
 				bb->GetTransform().modelId, -1,
 				s->GetPos(), s->GetCollisionRadius());
@@ -94,6 +100,28 @@ void GameScene::Update()
 			}
 		
 			MV1CollResultPolyDimTerminate(info);
+		}
+
+	}
+
+	for (const auto s : shotsTwo)
+	{
+		s->Update();
+		if (!s->IsAlive())
+		{
+			continue;
+		}
+		if (bb->IsAlive())
+		{
+			if (IsHitSpheres(s->GetPos(), s->GetCollisionRadius(),
+				bb->GetPos(), bb->COLLISION_RADIUS))
+			{
+				bb->Damage();
+
+				break;
+			}
+
+			
 		}
 
 	}
@@ -178,6 +206,7 @@ void GameScene::Draw(void)
 
 	bb->Draw();
 	ec->Draw();
+	em->Draw();
 	MV1DrawModel(test);
 
 
@@ -195,6 +224,7 @@ void GameScene::Release(void)
 {
 	bb.reset();
 	ec.reset();
+	em.reset();
 	mSkyDome->Release();
 	delete mSkyDome;
 }

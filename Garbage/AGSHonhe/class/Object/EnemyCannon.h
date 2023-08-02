@@ -50,7 +50,11 @@ public:
 	bool IsAlive(void) const;
 	bool IsDead(void) const;
 	const Transform& GetTransform(void) const;
+
 private:
+	float Deg2RadF(float deg);
+	//ƒ^ƒŒƒbƒg
+	std::vector<EnemyCannon*>mTurrets;
 	Transform transform_;
 	float stepShotDelay_;
 	std::vector<Collider*> colliders_;
